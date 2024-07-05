@@ -12,16 +12,17 @@ namespace InventoryManagementSystem.Data.Entities
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        public int ProductId { get; set; }
 
         [Required]
         [MaxLength(100)]
-        public string Name { get; set; }
-
-        public string Code { get; set; }
-
+        public string ProductName { get; set; } = string.Empty;
+        public string? Code { get; set; }
         public int Quantity { get; set; }
-        public string Description { get; set; }
-
+        public string? Description { get; set; }
+        public string? AdditionalInfo { get; set; }
+        public int CategoryId { get; set; }
+        public Category Categories { get; set; }
+        //public ICollection<ProductLocation> ProductLocations { get; set; }
     }
 }

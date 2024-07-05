@@ -2,6 +2,7 @@
 using InventoryManagementSystem.Data.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace InventoryManagementSystem.Data.Migrations
 {
     [DbContext(typeof(ApplicationDataContext))]
-    partial class ApplicationDataContextModelSnapshot : ModelSnapshot
+    [Migration("20240705081041_AdditionalInfo")]
+    partial class AdditionalInfo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -121,13 +124,13 @@ namespace InventoryManagementSystem.Data.Migrations
 
             modelBuilder.Entity("InventoryManagementSystem.Data.Entities.Product", b =>
                 {
-                    b.HasOne("InventoryManagementSystem.Data.Entities.Category", "Categories")
+                    b.HasOne("InventoryManagementSystem.Data.Entities.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Categories");
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("InventoryManagementSystem.Data.Entities.ProductLocation", b =>
@@ -139,7 +142,7 @@ namespace InventoryManagementSystem.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("InventoryManagementSystem.Data.Entities.Product", "Product")
-                        .WithMany()
+                        .WithMany("ProductLocations")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -155,6 +158,11 @@ namespace InventoryManagementSystem.Data.Migrations
                 });
 
             modelBuilder.Entity("InventoryManagementSystem.Data.Entities.Location", b =>
+                {
+                    b.Navigation("ProductLocations");
+                });
+
+            modelBuilder.Entity("InventoryManagementSystem.Data.Entities.Product", b =>
                 {
                     b.Navigation("ProductLocations");
                 });

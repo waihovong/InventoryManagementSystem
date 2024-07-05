@@ -5,7 +5,7 @@
 namespace InventoryManagementSystem.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class TestProductTable : Migration
+    public partial class AdditionalInfo : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
