@@ -4,9 +4,11 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>895dd723-e4e1-4c56-8a1e-273c27c75b0e</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\InventoryManagementSystem.API\InventoryManagementSystem.API.csproj" />
     <ProjectReference Include="..\InventoryManagementSystem.Test\InventoryManagementSystem.Test.csproj" />
   </ItemGroup>
 

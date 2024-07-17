@@ -1,8 +1,6 @@
-﻿using InventoryManagementSystem.Data.Entities;
-
-namespace InventoryManagementSystem.API.DTO
+﻿namespace InventoryManagementSystem.Web.Models
 {
-    public class ProductDTO 
+    public class ProductViewModel
     {
         public int ProductId { get; set; }
         public string ProductName { get; set; } = string.Empty;

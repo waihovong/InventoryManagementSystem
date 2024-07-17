@@ -19,6 +19,5 @@
 
   <ItemGroup>
     <ProjectReference Include="..\InventoryManagementSystem.Data\InventoryManagementSystem.Data.csproj" />
-    <ProjectReference Include="..\InventoryManagementSystem.Web\InventoryManagementSystem.Web.csproj" />
   </ItemGroup>
 </Project>

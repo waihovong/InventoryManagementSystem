@@ -13,43 +13,112 @@ namespace InventoryManagementSystem.API.Controllers.Product
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
-        private readonly IMapper _mapper;
-        public ProductController(IProductService productService, IMapper mapper)
+        public ProductController(IProductService productService)
         {
             _productService = productService;
-            _mapper = mapper;
         }
-
+         
+        /// <summary>
+        /// Gets all products that have been created
+        /// TODO: Add pagination in future
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("products")]
         [ProducesResponseType(typeof(IEnumerable<ProductDTO>), 200)]
-        public async Task<ActionResult<IEnumerable<Data.Entities.Product>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProducts()
         {
             var products = await _productService.GetProductsAsync();
+
             if (products == null)
             {
-                Console.WriteLine("No Products found");
+                return NotFound();
             }
 
-            var productDTOs = _mapper.Map<IEnumerable<ProductDTO>>(products);
-
-            return Ok(productDTOs);
+            return Ok(products);
         }
 
-        [HttpPost]
-        [Route("products")]
-        public async Task<ActionResult<ProductDTO>> AddProduct([FromBody] ProductDTO productDTO)
+        /// <summary>
+        /// Gets a product by Id
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("product/{productId}")]
+        [ProducesResponseType(typeof(ProductDTO), 200)]
+        public async Task<ActionResult> GetProduct(int productId)
         {
-            if (productDTO == null)
+            try
             {
-                return BadRequest();
+                var product = await _productService.GetProductAsync(productId);
+
+                if (product == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(product);
+            }
+            catch(ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        /// <summary>
+        /// Creates a new product to be added into the inventory list
+        /// </summary>
+        /// <param name="productDTO"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("product")]
+        public async Task<ActionResult<ProductDTO>> AddProduct([FromBody] ProductCreateDTO productDTO)
+        {
+            try
+            {
+                var response = await _productService.AddProduct(productDTO);
+                return Ok(response);
+            }
+            catch (ApplicationException ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Failed to create product, please try again later");
+            }
+        }
+
+        /// <summary>
+        /// TODO: Update product to the dto and same with service layer
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <param name="product"></param>
+        /// <returns></returns>
+        [HttpPatch]
+        [Route("product")]
+        public async Task<ActionResult<ProductDTO>> UpdateProduct(ProductUpdateDTO product)
+        {
+            try
+            {
+                var response = await _productService.UpdateProduct(product);
+
+                if (response == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(response);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
             }
 
-            var product = _mapper.Map<Data.Entities.Product>(productDTO);
-
-            var response = await _productService.AddProduct(product);
-
-            return Ok(response);
         }
     }
 }
