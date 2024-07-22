@@ -4,15 +4,19 @@ using InventoryManagementSystem.API.Services;
 using InventoryManagementSystem.Data.Data;
 using Microsoft.EntityFrameworkCore;
 using InventoryManagementSystem.API.Controllers.Product;
+using InventoryManagementSystem.API.Controllers.Category;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<ApplicationDataContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
-    b => b.MigrationsAssembly("InventoryManagementSystem.Data")));
+builder.Services.AddDbContextFactory<ApplicationDataContext>((DbContextOptionsBuilder options) => 
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
 
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ProductController>();
+builder.Services.AddScoped<CategoryController>();
+
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();

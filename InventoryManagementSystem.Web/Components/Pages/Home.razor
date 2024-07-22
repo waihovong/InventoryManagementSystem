@@ -1,59 +1,16 @@
 ﻿@page "/"
 @using Microsoft.AspNetCore.Mvc
-@using Models;
-@using InventoryManagementSystem.API.DTO;
-@inject InventoryManagementSystem.API.Controllers.Product.ProductController _productController;
 
+@using Components.Pages;
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
-
-<div>
-    <div>
-        @foreach(var product in Products)
-        {
-            <div>
-                @product.ProductName
-                @product.Description
-                @product.Quantity
-                @product.AdditionalInfo
-            </div>
-        }
-    </div>
+<div class="container mt-5">
+    <InventoryManagementSystem.Web.Components.Product.Landing></InventoryManagementSystem.Web.Components.Product.Landing>
+    <InventoryManagementSystem.Web.Components.Product.Latest></InventoryManagementSystem.Web.Components.Product.Latest>
 </div>
 
-@code 
-{
-    public IEnumerable<ProductViewModel> Products { get; set; } = new List<ProductViewModel>();
-
-    protected override async Task OnInitializedAsync()
-    {
-        var product = await _productController.GetProducts();
-        if (product.Result != null && product.Result is OkObjectResult okObjectResult)
-        {
-            var productDto = okObjectResult.Value as IEnumerable<ProductDTO>;
-            var productList = MapProductView(productDto).ToList();
-            Products = productList;
-        }
+<style>
+    body {
+        background-color: #e9e5dd;
     }
-
-    private IEnumerable<ProductViewModel> MapProductView(IEnumerable<ProductDTO> productDto)
-    {
-        if (productDto == null)
-        {
-            return Enumerable.Empty<ProductViewModel>();
-        }
-
-        var productView = productDto.Select(dto => new ProductViewModel
-        {
-            AdditionalInfo = dto.AdditionalInfo,
-            ProductName = dto.ProductName,
-            Quantity = dto.Quantity,
-            Description = dto.Description,
-        });
-
-        return productView;
-    }
-}
+</style>

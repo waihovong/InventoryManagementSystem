@@ -12,16 +12,26 @@ namespace InventoryManagementSystem.API.Services
 {
     public class ProductService : IProductService
     {
-        private readonly ApplicationDataContext _context;
-        public ProductService(ApplicationDataContext context) 
+        //private readonly ApplicationDataContext _context;
+        private IDbContextFactory<ApplicationDataContext> _contextFactory;
+
+        public ProductService( IDbContextFactory<ApplicationDataContext> contextFactory)
         {
-            _context = context;
+            _contextFactory = contextFactory;
+        }
+
+        private async Task<T> UseDbContextAsync<T>(Func<ApplicationDataContext, Task<T>> action)
+        {
+            using (var context = _contextFactory.CreateDbContext())
+            {
+                return await action(context);
+            }
         }
 
         [HttpGet]
         public async Task<IEnumerable<ProductDTO>> GetProductsAsync()
         {
-            var product =  await _context.Products.ToListAsync();
+            var product = await UseDbContextAsync(async context => await context.Products.ToListAsync());
 
             var productDto = product.Select(p => new ProductDTO
             {
@@ -43,7 +53,8 @@ namespace InventoryManagementSystem.API.Services
                 throw new ArgumentException("Invalid product ID");
             }
 
-            var product = await _context.Products.FindAsync(productId);
+            var product = await UseDbContextAsync(async context => 
+                await context.Products.FindAsync(productId));
 
             if (product == null)
             {
@@ -65,91 +76,70 @@ namespace InventoryManagementSystem.API.Services
         [HttpPost]
         public async Task<ProductDTO> AddProduct(ProductCreateDTO createProduct)
         {
-            try
+            var product = new Product
             {
-                var product = new Product
-                {
-                    AdditionalInfo = createProduct.AdditionalInfo,
-                    Description = createProduct.Description,
-                    ProductName = createProduct.ProductName,
-                    Quantity = createProduct.Quantity
-                };
+                AdditionalInfo = createProduct.AdditionalInfo,
+                Description = createProduct.Description,
+                ProductName = createProduct.ProductName,
+                Quantity = createProduct.Quantity
+            };
 
-                _context.Products.Add(product);
-
-                await _context.SaveChangesAsync();
-
-                var createdProductDto = new ProductDTO
-                {
-                    AdditionalInfo = product.AdditionalInfo,
-                    ProductId = product.ProductId,
-                    Description = product.Description,
-                    Quantity = product.Quantity,
-                    ProductName = product.ProductName
-                };
-
-                return createdProductDto;
-            }
-            catch (Exception ex)
+            using (var context = _contextFactory.CreateDbContext())
             {
-                Console.Write($"Failed to create product {ex.Message}");
-                throw new ApplicationException(ex.Message);
+                context.Products.Add(product);
+                await context.SaveChangesAsync();
             }
+
+            var createdProductDto = new ProductDTO
+            {
+                AdditionalInfo = product.AdditionalInfo,
+                ProductId = product.ProductId,
+                Description = product.Description,
+                Quantity = product.Quantity,
+                ProductName = product.ProductName
+            };
+
+            return createdProductDto;
         }
 
         public async Task<ProductDTO> UpdateProduct(ProductUpdateDTO product)
-        {         
-            try
+        {
+
+            if (product == null)
             {
-                if (product == null)
-                {
-                    throw new ArgumentNullException(nameof(product));
-                }
-
-                if (product.ProductId <= 0)
-                {
-                    throw new ArgumentException("Invalid product ID");
-                }
-
-
-                var response = await _context.Products.FindAsync(product.ProductId);
-
-                if (response == null)
-                {
-                    throw new ArgumentException("Invalid product ID");
-                }
-
-                response.ProductName = product.ProductName ?? response.ProductName;
-                response.Description = product.Description ?? response.Description;
-                response.Quantity = product.Quantity >= 0 ? product.Quantity : response.Quantity;
-                response.AdditionalInfo = product.AdditionalInfo ?? response.AdditionalInfo;
-
-                _context.Update(response);
-
-                await _context.SaveChangesAsync();
-                
-
-                var updatedProductDto = new ProductDTO
-                {
-                    AdditionalInfo = response.AdditionalInfo,
-                    ProductId = response.ProductId,
-                    Description = response.Description,
-                    Quantity = response.Quantity,
-                    ProductName = response.ProductName
-                };
-
-                return updatedProductDto;
-            }
-            catch(ArgumentException ex)
-            {
-                throw new ArgumentException(ex.Message);
-            }
-            catch(Exception ex)
-            {
-                Console.Write($"Failed to update product {ex.Message}");
-                throw new ApplicationException(ex.Message);
+                return null;
             }
 
+            var response = await UseDbContextAsync(async context => 
+                await context.Products.FindAsync(product.ProductId));
+
+            if (response == null)
+            {
+                return null;
+            }
+
+            response.ProductName = product.ProductName ?? response.ProductName;
+            response.Description = product.Description ?? response.Description;
+            response.Quantity = product.Quantity >= 0 ? product.Quantity : response.Quantity;
+            response.AdditionalInfo = product.AdditionalInfo ?? response.AdditionalInfo;
+
+            using (var context = _contextFactory.CreateDbContext())
+            {
+                context.Update(response);
+                await context.SaveChangesAsync();
+            }
+
+
+            var updatedProductDto = new ProductDTO
+            {
+                AdditionalInfo = response.AdditionalInfo,
+                ProductId = response.ProductId,
+                Description = response.Description,
+                Quantity = response.Quantity,
+                ProductName = response.ProductName
+            };
+
+            return updatedProductDto;
         }
     }
 }

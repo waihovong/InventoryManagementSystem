@@ -23,22 +23,31 @@ namespace InventoryManagementSystem.Data.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //modelBuilder.Entity<Product>()
-            //    .HasOne(p => p.Categories)
-            //    .WithMany(c => c.Products)
-            //    .HasForeignKey(p => p.CategoryId);
+            modelBuilder.Entity<Product_Category>()
+                .HasKey(pc => new { pc.ProductId, pc.CategoryId });
 
-            //modelBuilder.Entity<ProductLocation>()
-            //    .HasOne(pl => pl.Location)
-            //    .WithMany(p => p.ProductLocations)
-            //    .HasForeignKey(pl => pl.LocationId);
+            modelBuilder.Entity<Product_Category>()
+                .HasOne(pc => pc.Product)
+                .WithMany(p => p.ProductCategories)
+                .HasForeignKey(pc => pc.ProductId);
+
+            modelBuilder.Entity<Product_Category>()
+                .HasOne(pc => pc.Category)
+                .WithMany(c => c.ProductCategories)
+                .HasForeignKey(pc => pc.CategoryId);
+
+            modelBuilder.Entity<Category>()
+                .HasIndex(c => c.CategoryName)
+                .IsUnique(true);
 
             base.OnModelCreating(modelBuilder);
         }
 
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<Location> Locations { get; set; }
-        public DbSet<ProductLocation> ProductLocations { get; set; }
+        public DbSet<Product_Category> Product_Category { get; set; }
+
+        //public DbSet<Location> Locations { get; set; }
+        //public DbSet<ProductLocation> ProductLocations { get; set; }
     }
 }
