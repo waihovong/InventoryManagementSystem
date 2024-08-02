@@ -1,16 +1,81 @@
 ﻿@page "/"
 @using Microsoft.AspNetCore.Mvc
+@using Models;
+@using InventoryManagementSystem.API.DTO;
+@inject InventoryManagementSystem.API.Controllers.Product.ProductController _productController;
 
 @using Components.Pages;
-<PageTitle>Home</PageTitle>
-
-<div class="container mt-5">
-    <InventoryManagementSystem.Web.Components.Product.Landing></InventoryManagementSystem.Web.Components.Product.Landing>
-    <InventoryManagementSystem.Web.Components.Product.Latest></InventoryManagementSystem.Web.Components.Product.Latest>
-</div>
+<PageTitle>Inventory Management</PageTitle>
+@if (isLoading)
+{
+    <div> Loading ... </div>
+}
+else
+{
+    <div class="container m-auto block">
+        <div class="">
+            <InventoryManagementSystem.Web.Components.Product.Landing 
+                Created="ProductCreated"
+                Products="Products"
+                />
+        </div>
+    </div>
+}
 
 <style>
     body {
         background-color: #e9e5dd;
     }
 </style>
+
+@code {
+    public IEnumerable<ProductViewModel> Products { get; set; } = new List<ProductViewModel>();
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Products = await GetProducts();
+        StateHasChanged();
+    }
+
+    public async Task ProductCreated(bool isCreated)
+    {
+        if (isCreated)
+        {
+            Products = await GetProducts();
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public async Task<IEnumerable<ProductViewModel>> GetProducts()
+    {
+        List<ProductViewModel> productList = new List<ProductViewModel>();
+        var product = await _productController.GetProducts();
+        if (product.Result != null && product.Result is OkObjectResult okObjectResult)
+        {
+            var productDto = okObjectResult.Value as IEnumerable<ProductDTO>;
+            productList = MapProductView(productDto).ToList();
+            isLoading = false;
+        }
+
+        return productList;
+    }
+
+    private IEnumerable<ProductViewModel> MapProductView(IEnumerable<ProductDTO> productDto)
+    {
+        if (productDto == null)
+        {
+            return Enumerable.Empty<ProductViewModel>();
+        }
+
+        var productView = productDto.Select(dto => new ProductViewModel
+            {
+                AdditionalInfo = dto.AdditionalInfo,
+                ProductName = dto.ProductName,
+                Quantity = dto.Quantity,
+                Description = dto.Description,
+            });
+
+        return productView;
+    }
+}

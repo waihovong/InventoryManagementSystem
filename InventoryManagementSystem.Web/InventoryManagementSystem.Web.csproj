@@ -8,8 +8,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Components\Product\ProductTable.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\InventoryManagementSystem.API\InventoryManagementSystem.API.csproj" />
     <ProjectReference Include="..\InventoryManagementSystem.Test\InventoryManagementSystem.Test.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Components\Product\ProductTable.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Components\Product\ProductTable.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Components\Product\ProductTable.razor" />
   </ItemGroup>
 
 </Project>

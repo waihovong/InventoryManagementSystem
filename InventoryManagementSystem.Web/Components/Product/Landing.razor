@@ -1,5 +1,58 @@
-﻿<div>
-    <h3>Dashboard</h3>
-    <InventoryManagementSystem.Web.Components.Product.Product></InventoryManagementSystem.Web.Components.Product.Product>
+﻿@using Models;
+@using InventoryManagementSystem.API.DTO;
+
+<div class="flex justify-center">
+    <div class="flex flex-col gap-4">
+        <div class="flex gap-4">
+            <div class="flex flex-col gap-4">
+                <div class="flex justify-end gap-4">
+                    <button class="bg-[#0a0a0a] rounded p-2 text-sm font-medium text-white hover:cursor-pointer" @onclick="AddProductAction">Add Product</button>
+                </div>
+                <InventoryManagementSystem.Web.Components.Product.Product Products="Products" />
+            </div>
+            <div class="flex flex-col gap-4">
+                <InventoryManagementSystem.Web.Components.Product.Latest Products="Products " />
+                <InventoryManagementSystem.Web.Components.Product.Latest Products="Products " />
+            </div>
+        </div>
+    </div>
 </div>
+@if (isAddProduct)
+{
+    <AddProduct IsOpen="@isAddProduct"
+        Created="ProductCreated"
+        IsOpenChanged="IsOpenChangedDialog" />
+}
+
+@code {
+    [Parameter]
+    public IEnumerable<ProductViewModel> Products { get; set; } = new List<ProductViewModel>();
+
+    [Parameter]
+    public EventCallback<bool> Created { get; set; }
+
+    public EventCallback<bool> IsOpenChanged { get; set; }
+
+    public bool isAddProduct = false;
+
+    public void AddProductAction()
+    {
+        isAddProduct = !isAddProduct;
+        StateHasChanged();
+    }
+
+    public void IsOpenChangedDialog(bool isOpen)
+    {
+        isAddProduct = isOpen;
+        StateHasChanged();
+    }
+
+    public void ProductCreated(bool isCreated)
+    {
+        if (isCreated)
+        {
+            Created.InvokeAsync(isCreated);
+        }
+    }
+}
 
