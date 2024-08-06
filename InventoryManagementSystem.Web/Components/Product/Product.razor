@@ -3,6 +3,9 @@
 @using InventoryManagementSystem.API.DTO;
 @inject InventoryManagementSystem.API.Controllers.Product.ProductController _productController;
 
+@{
+    var validProducts = Products.Where(p => !string.IsNullOrEmpty(p.ProductName));
+}
 <div class="bg-white/30 w-full rounded-lg p-3 backdrop-blur-sm">
     <h3 class="p-2 text-base font-medium">Products <span class="text-xs text-stone-600">(@Products.Count() products)</span></h3>
     <table class="table-auto border-collapse border-slate-800">
@@ -10,20 +13,18 @@
             <th class="w-10/12 p-2 text-left font-medium capitalize">Name</th>
             <th class="w-10/12 p-2 text-left font-medium capitalize">Description</th>
             <th class="p-2 text-left font-medium capitalize">Quantity</th>
-            <th class="p-2 text-left font-medium capitalize">Category</th>
             <th class="p-2 text-left font-medium capitalize">Information</th>
             <th></th>
         </tr>
         <tbody class="text-base">
-            @foreach (var product in Products)
+            @foreach (var product in validProducts)
             {
-                <tr class="border-b-2 border-t-0 border-l-0 border-r-0 whitespace-nowrap border text-sm font-light hover:bg-amber-100">
+                <tr class="border-b-2 border-t-0 border-l-0 border-r-0 whitespace-nowrap border text-sm hover:bg-amber-100">
                     <td class="p-3">@product.ProductName</td>
                     <td class="p-3">@product.Description</td>
                     <td class="p-3 text-center">@product.Quantity</td>
-                    <td class="p-3 text-center">category</td>
                     <td class="p-3">@product.AdditionalInfo</td>
-                    <td class="p-3">...</td>
+                    <td class="p-3"><span class="hover:bg-gray-400 hover:cursor-pointer" @onclick="() => EditProduct(product)">. . .</span></td>
                 </tr>
             }
         </tbody>
@@ -33,4 +34,17 @@
 @code {
     [Parameter]
     public IEnumerable<ProductViewModel> Products { get; set; } = new List<ProductViewModel>();
+
+    private bool isEdit = false;
+
+    [Parameter]
+    public EventCallback<ProductViewModel> SelectedProduct { get; set; }
+
+    private async Task EditProduct(ProductViewModel product)
+    {
+        isEdit = !isEdit;
+        await SelectedProduct.InvokeAsync(product);
+        StateHasChanged();
+    }
+
 }

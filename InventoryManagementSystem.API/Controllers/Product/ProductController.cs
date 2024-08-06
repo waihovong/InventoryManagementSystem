@@ -46,7 +46,7 @@ namespace InventoryManagementSystem.API.Controllers.Product
         [HttpGet]
         [Route("product/{productId}")]
         [ProducesResponseType(typeof(ProductDTO), 200)]
-        public async Task<ActionResult> GetProduct(int productId)
+        public async Task<ActionResult<ProductDTO>> GetProduct(int productId)
         {
             try
             {
