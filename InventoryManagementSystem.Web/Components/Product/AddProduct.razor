@@ -1,4 +1,5 @@
-﻿@using Models;
+﻿@using Microsoft.AspNetCore.Mvc
+@using Models;
 @using InventoryManagementSystem.API.DTO;
 @inject InventoryManagementSystem.API.Controllers.Product.ProductController _productController;
 
@@ -9,15 +10,17 @@
         <div class="text-base text-stone-600">Add a new product to your inventory</div>
         <div>
             <EditForm Model="Product" OnValidSubmit="AddProductToInventory">
+                <DataAnnotationsValidator/>
                 <div class="mb-2 mt-3">
                     <div class="mb-2">
                         <label class="text-base font-medium">Name <span class="text-red-600">*</span></label>
                         <div>
                             <InputText @bind-Value="Product.ProductName" class="w-full rounded-lg border border-stone-300 p-2 text-base"/>
+                            <ValidationMessage class="text-xs text-red-600" For="() => Product.ProductName"/>
                         </div>
                     </div>
                     <div class="mb-2">
-                        <label class="text-base font-medium">Quantity <span class="text-red-600">*</span></label>
+                        <label class="text-base font-medium">Quantity </label>
                         <div>
                             <InputNumber @bind-Value="Product.Quantity" class="w-full rounded-lg border border-stone-300 p-2 text-base" />
                         </div>
@@ -28,6 +31,7 @@
                     <label class="text-base font-medium">Description <span class="text-red-600">*</span></label>
                     <div>
                         <InputTextArea @bind-Value="Product.Description" class="rounded-lg border border-stone-300 p-2 text-base"/>
+                        <ValidationMessage class="text-xs text-red-600" For="() => Product.Description" />
                     </div>
                 </div>
 
@@ -92,7 +96,7 @@
 
         var product = await _productController.AddProduct(productDto);
 
-        if (product != null)
+        if (product.Result != null && product.Result is OkObjectResult okObjectResult)
         {
             await Created.InvokeAsync(true);
             await IsClosed();
