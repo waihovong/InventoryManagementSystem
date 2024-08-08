@@ -141,5 +141,36 @@ namespace InventoryManagementSystem.API.Services
 
             return updatedProductDto;
         }
+
+        public async Task<bool> DeleteProduct(int productId)
+        {
+            if (productId <= 0)
+            {
+                return false;
+            }
+
+            try
+            {
+                using (var context = _contextFactory.CreateDbContext())
+                {
+                    var product = await context.Products.FindAsync(productId);
+
+                    if (product != null)
+                    {
+                        context.Products.Remove(product);
+                        await context.SaveChangesAsync();
+                        return true;
+                    }
+                    else
+                    {
+                        throw new Exception($"Product with ID {productId} not found.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

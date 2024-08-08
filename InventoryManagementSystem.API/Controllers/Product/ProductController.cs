@@ -80,6 +80,11 @@ namespace InventoryManagementSystem.API.Controllers.Product
         {
             try
             {
+                //if (string.IsNullOrEmpty(productDTO.ProductName))
+                //{
+                //    return BadRequest("Product name cannot be empty");
+                //}
+
                 var response = await _productService.AddProduct(productDTO);
                 return Ok(response);
             }
@@ -118,7 +123,32 @@ namespace InventoryManagementSystem.API.Controllers.Product
             {
                 return StatusCode(500, "Internal server error");
             }
+        }
 
+        [HttpDelete]
+        [Route("product/{productId}")]
+        public async Task<IActionResult> DeleteProduct(int productId)
+        {
+            try
+            {
+                var response = await _productService.DeleteProduct(productId);
+                if (response)
+                {
+                    return Ok(true);
+                }
+                else
+                {
+                    return NotFound(false);
+                }
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
+            }
         }
     }
 }

@@ -10,5 +10,6 @@ namespace InventoryManagementSystem.API.Interfaces
         Task<ProductDTO> AddProduct(ProductCreateDTO product);
         Task<ProductDTO> UpdateProduct(ProductUpdateDTO product);
         Task<ProductDTO> GetProductAsync(int productId);
+        Task<bool> DeleteProduct(int productId);
     }
 }

@@ -17,6 +17,7 @@ else
             <InventoryManagementSystem.Web.Components.Product.Landing 
                 Created="ProductCreated"
                 Updated="ProductUpdated"
+                Deleted="ProductDeleted"
                 Products="Products"
                 />
         </div>
@@ -51,6 +52,15 @@ else
     public async Task ProductUpdated(bool isUpdated)
     {
         if (isUpdated)
+        {
+            Products = await GetProducts();
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public async Task ProductDeleted(bool isDeleted)
+    {
+        if (isDeleted)
         {
             Products = await GetProducts();
             await InvokeAsync(StateHasChanged);

@@ -6,7 +6,7 @@
 @{
     var validProducts = Products.Where(p => !string.IsNullOrEmpty(p.ProductName));
 }
-<div class="bg-white/30 w-full rounded-lg p-3 backdrop-blur-sm">
+<div class="bg-white/30 w-full rounded-lg p-3 backdrop-blur-sm" @onclick="CloseMenu">
     <h3 class="p-2 text-base font-medium">Products <span class="text-xs text-stone-600">(@Products.Count() products)</span></h3>
     <table class="table-auto border-collapse border-slate-800">
         <tr class="text-sm text-neutral-500">
@@ -24,7 +24,17 @@
                     <td class="p-3">@product.Description</td>
                     <td class="p-3 text-center">@product.Quantity</td>
                     <td class="p-3">@product.AdditionalInfo</td>
-                    <td class="p-3"><span class="hover:bg-gray-400 hover:cursor-pointer" @onclick="() => EditProduct(product)">. . .</span></td>
+                    @* <td class="p-3"><span class="rounded-lg p-1 hover:bg-gray-400 hover:cursor-pointer" @onclick="() => EditProduct(product)">. . .</span></td> *@
+                    <td class="p-3"><span class="rounded-lg p-1 hover:bg-gray-400 hover:cursor-pointer" @onclick:stopPropagation="true" @onclick="() => MenuItem(product.ProductId)">. . .</span></td>
+                    @if (selectedProductId == product.ProductId && selectedProductId != null)
+                    {
+                        <div class="ring-1 ring-opacity-5 absolute right-0 mt-2 w-fit rounded-md bg-white shadow-lg ring-black" @onclick:stopPropagation="true">
+                            <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" @onclick="() => EditProduct(product)">Edit</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" @onclick="() => DeleteProduct(product)">Delete</a>
+                            </div>
+                        </div>
+                    }
                 </tr>
             }
         </tbody>
@@ -36,15 +46,41 @@
     public IEnumerable<ProductViewModel> Products { get; set; } = new List<ProductViewModel>();
 
     private bool isEdit = false;
+    private bool isDelete = false;
+
+    private int? selectedProductId;
 
     [Parameter]
-    public EventCallback<ProductViewModel> SelectedProduct { get; set; }
+    public EventCallback<ProductViewModel> EditSelectedProduct { get; set; }
+
+    [Parameter]
+    public EventCallback<ProductViewModel> DeleteSelectedProduct { get; set; }
 
     private async Task EditProduct(ProductViewModel product)
     {
         isEdit = !isEdit;
-        await SelectedProduct.InvokeAsync(product);
+        selectedProductId = null;
+        await EditSelectedProduct.InvokeAsync(product);
         StateHasChanged();
+    }
+
+    private async Task DeleteProduct(ProductViewModel product)
+    {
+        isDelete = !isDelete;
+        selectedProductId = null;
+        await DeleteSelectedProduct.InvokeAsync(product);
+        StateHasChanged();
+    }
+
+    private void MenuItem(int productId)
+    {
+        selectedProductId = selectedProductId == productId ? null : productId;
+        StateHasChanged();
+    }
+
+    private void CloseMenu()
+    {
+        selectedProductId = null;
     }
 
 }

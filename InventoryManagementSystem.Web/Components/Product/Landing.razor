@@ -13,7 +13,10 @@
                         <button class="bg-[#0a0a0a] rounded p-2 text-sm font-medium text-white hover:cursor-pointer" @onclick="AddProductAction">Add Product</button>
                     </div>
                 </div>
-                <InventoryManagementSystem.Web.Components.Product.Product SelectedProduct="SelectedProduct" Products="Products" />
+                <InventoryManagementSystem.Web.Components.Product.Product 
+                    EditSelectedProduct="EditSelectedProduct" 
+                    DeleteSelectedProduct="DeleteSelectedProduct"
+                    Products="Products" />
             </div>
             <div class="flex flex-col gap-4">
                 <InventoryManagementSystem.Web.Components.Product.Latest Products="Products " />
@@ -36,10 +39,19 @@
         ProductId="@editProductId" />
 }
 
+@if (isDeleteProduct)
+{
+    <DeleteProduct 
+        IsOpen="@isDeleteProduct"
+        IsOpenChanged="IsOpenDeleteChangedDialog"
+        Deleted="ProductDeleted"
+        ProductId="@deleteProductId" />
+}
+
 
 @code {
     [Parameter]
-    public IEnumerable<ProductViewModel> Products { get; set; } = new List<ProductViewModel>();
+    public IEnumerable<ProductViewModel> Products { get; set; }
 
     [Parameter]
     public EventCallback<bool> Created { get; set; }
@@ -47,12 +59,17 @@
     [Parameter]
     public EventCallback<bool> Updated { get; set; }
 
+    [Parameter]
+    public EventCallback<bool> Deleted { get; set; }
+
     public EventCallback<bool> IsOpenChanged { get; set; }
 
     public bool isAddProduct = false;
     public bool isEditProduct = false;
+    public bool isDeleteProduct = false;
 
     private int editProductId;
+    private int deleteProductId;
 
     public void AddProductAction()
     {
@@ -72,6 +89,12 @@
         StateHasChanged();
     }
 
+    public void IsOpenDeleteChangedDialog(bool isOpen)
+    {
+        isDeleteProduct = isOpen;
+        StateHasChanged();
+    }
+
     public void ProductCreated(bool isCreated)
     {
         if (isCreated)
@@ -80,12 +103,22 @@
         }
     }
 
-    public void SelectedProduct(ProductViewModel product)
+    public void EditSelectedProduct(ProductViewModel product)
     {
         if (product != null)
         {
             isEditProduct = !isEditProduct;
             editProductId = product.ProductId;
+            StateHasChanged();
+        }
+    }
+    //TODO: Make combine this with EditSelectedProduct into 1 function that does the conversion 
+    public void DeleteSelectedProduct(ProductViewModel product)
+    {
+        if (product != null)
+        {
+            isDeleteProduct = !isDeleteProduct;
+            deleteProductId = product.ProductId;
             StateHasChanged();
         }
     }
@@ -95,6 +128,14 @@
         if (isUpdated)
         {
             Updated.InvokeAsync(isUpdated);
+        }
+    }
+
+    public void ProductDeleted(bool isDeleted)
+    {
+        if (isDeleted)
+        {
+            Deleted.InvokeAsync(isDeleted);
         }
     }
 }

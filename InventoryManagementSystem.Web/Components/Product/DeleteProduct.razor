@@ -1,0 +1,99 @@
+﻿@using Microsoft.AspNetCore.Mvc
+@using Models;
+@using InventoryManagementSystem.API.DTO;
+@inject InventoryManagementSystem.API.Controllers.Product.ProductController _productController;
+
+<div class="flex items-center justify-center">
+    <div class="dialog p-3"></div>
+    <div style="z-index:10; position:absolute; top:0" class="mt-8 w-fit rounded-xl bg-white p-6">
+        <div @onclick="IsClosed" class="hover:cursor-pointer"><span>x</span></div>
+        <span class="text-base font-medium">Delete Product?</span>
+        <div>
+            <p>Delete this product?</p>
+            <p>Are you sure you want to delete this product? You will need to re-add </p>
+        </div>
+        <div>
+            <button class="rounded-lg" @onclick="DeleteProductFromInventory">Delete</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .dialog {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        background: black;
+        opacity: 0.5;
+    }
+</style>
+
+@code {
+    [Parameter]
+    public bool IsOpen { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> IsOpenChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> Deleted { get; set; }
+
+    [Parameter]
+    public int ProductId { get; set; }
+
+    public ProductViewModel ProductView { get; set; }
+
+    public async Task IsClosed()
+    {
+        await IsOpenChanged.InvokeAsync(false);
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        ProductView = await GetProductById(ProductId);
+    }
+
+    public async Task DeleteProductFromInventory()
+    {
+        var deleteProduct = await _productController.DeleteProduct(ProductId);
+        
+        if (deleteProduct != null && deleteProduct is OkObjectResult okObjectResult)
+        {
+            await Deleted.InvokeAsync(true);
+            await IsOpenChanged.InvokeAsync(false);
+        }
+    }
+
+    public async Task<ProductViewModel> GetProductById(int productId)
+    {
+        ProductViewModel selectedProduct = new ProductViewModel();
+        var product = await _productController.GetProduct(productId);
+        if (product.Result != null && product.Result is OkObjectResult okObjectResult)
+        {
+            var productDto = okObjectResult.Value as ProductDTO;
+            selectedProduct = MapProductView(productDto);
+        }
+
+        return selectedProduct;
+    }
+
+    private ProductViewModel MapProductView(ProductDTO productDto)
+    {
+        if (productDto == null)
+        {
+            return new ProductViewModel();
+        }
+
+        var productView = new ProductViewModel
+            {
+                ProductId = productDto.ProductId,
+                ProductName = productDto.ProductName,
+                Quantity = productDto.Quantity,
+                Description = productDto.Description,
+                AdditionalInfo = productDto.AdditionalInfo
+            };
+        return productView;
+    }
+}

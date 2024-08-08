@@ -1,7 +1,10 @@
-﻿namespace InventoryManagementSystem.API.DTO
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace InventoryManagementSystem.API.DTO
 {
     public class ProductCreateDTO
     {
+        [Required]
         public string ProductName { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public int Quantity { get; set; }
