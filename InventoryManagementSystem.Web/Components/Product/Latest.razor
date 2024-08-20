@@ -6,14 +6,14 @@
     var latestProductList = Products.Where(p => !string.IsNullOrEmpty(p.ProductName))
         .OrderByDescending(p => p.ProductId).Take(5).ToList();
 }
-<div class="bg-white/30 w-11/12 rounded-lg p-3 backdrop-blur-sm">
+<div class="bg-[#2C333A] w-full rounded-lg p-3 text-white backdrop-blur-sm">
     <h3 class="p-2 pb-0 text-base font-medium">Recent Products</h3>
-    <span class="p-2 pt-0 text-xs font-medium text-gray-500">Most recent</span>
+    <span class="p-2 pt-0 text-xs font-medium text-white">Most recent</span>
     <div>
         @foreach (var product in latestProductList)
         {
-            <div class="flex justify-between p-2 text-sm hover:bg-amber-200">
-                <div>@product.ProductName</div>
+            <div class="flex justify-between p-2 text-sm">
+                <div class="font-medium">@product.ProductName</div>
                 <div>@product.Quantity</div>
             </div>
         }

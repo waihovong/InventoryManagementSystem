@@ -2,24 +2,60 @@
 @using InventoryManagementSystem.API.DTO;
 
 <div class="mt-5 flex justify-center">
-    <div class="flex flex-col gap-4">
+    <div class="flex w-full flex-col gap-4">
         <div class="flex gap-4">
-            <div class="flex flex-col gap-4">
+            <div class="flex w-full flex-col gap-4">
                 <div class="flex items-center justify-between gap-4">
                     <div>
-                        <p class="text-lg">Inventory System</p>
+                        <p class="text-lg font-medium text-white">Inventory System</p>
                     </div>
-                    <div>
-                        <button class="bg-[#0a0a0a] rounded p-2 text-sm font-medium text-white hover:cursor-pointer" @onclick="AddProductAction">Add Product</button>
+                    <div class="flex h-full items-center justify-end gap-4">
+                        <div class="flex h-full items-center">
+                            <input class="bg-[#35434c] h-full w-full rounded pl-2 text-sm font-medium text-white" type="text" placeholder="Search" />
+                        </div>
+                        <div>
+                            <button class="bg-[#0055CC] rounded p-2 text-sm font-medium text-white hover:cursor-pointer" @onclick="AddProductAction">Add Product + </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex h-full items-center justify-between gap-4 text-center text-white">
+                    <div class="h-full w-full">
+                        <div class="bg-[#35434c] flex h-full flex-col justify-between rounded-lg p-3 text-base">
+                            <div class="font-medium">Inventory</div>
+                            <div class="text-lg">@Products.Count()</div>
+                        </div>
+                    </div>
+                    <div class="h-full w-full">
+                        <div class="bg-[#35434c] flex h-full flex-col justify-between gap-3 rounded-lg p-3">
+                            <div class="font-medium">Wish List</div>
+                            <div class="text-lg">0</div>
+                        </div>
+                    </div>
+                    <div class="h-full w-full">
+                        <div class="bg-[#35434c] flex h-full flex-col justify-between rounded-lg p-3 text-base">
+                            <div class="font-medium">Last Added</div>
+                            <div class="text-sm">@Products.OrderByDescending(x => x.ProductId).FirstOrDefault()?.ProductName</div>
+                        </div>
+                    </div>
+                    <div class="h-full w-full">
+                        <div class="bg-[#35434c] flex h-full flex-col justify-between rounded-lg p-3 text-base">
+                            <div class="font-medium">Last Edited</div>
+                            <div>TODO</div>
+                        </div>
                     </div>
                 </div>
                 <InventoryManagementSystem.Web.Components.Product.Product 
                     EditSelectedProduct="EditSelectedProduct" 
                     DeleteSelectedProduct="DeleteSelectedProduct"
+                    ViewSelectedProduct="ViewSelectedProduct"
                     Products="Products" />
             </div>
-            <div class="flex flex-col gap-4">
+            <div class="flex w-full flex-col gap-4">
                 <InventoryManagementSystem.Web.Components.Product.Latest Products="Products " />
+                @if (viewSelectedProduct)
+                {
+                    <ProductOverview ProductId="selectedProductId" />
+                }
             </div>
         </div>
     </div>
@@ -68,8 +104,11 @@
     public bool isEditProduct = false;
     public bool isDeleteProduct = false;
 
+    public bool viewSelectedProduct = false;
+
     private int editProductId;
     private int deleteProductId;
+    private int selectedProductId;
 
     public void AddProductAction()
     {
@@ -112,7 +151,7 @@
             StateHasChanged();
         }
     }
-    //TODO: Make combine this with EditSelectedProduct into 1 function that does the conversion 
+
     public void DeleteSelectedProduct(ProductViewModel product)
     {
         if (product != null)
@@ -136,6 +175,16 @@
         if (isDeleted)
         {
             Deleted.InvokeAsync(isDeleted);
+        }
+    }
+
+    public void ViewSelectedProduct(int productId)
+    {
+        if (productId != 0)
+        {
+            selectedProductId = productId;
+            viewSelectedProduct = true;
+            StateHasChanged();
         }
     }
 }
