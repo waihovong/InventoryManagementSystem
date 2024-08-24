@@ -40,7 +40,7 @@
                     <div class="h-full w-full">
                         <div class="bg-[#35434c] flex h-full flex-col justify-between rounded-lg p-3 text-base">
                             <div class="font-medium">Last Edited</div>
-                            <div>TODO</div>
+                            <div>@Products.OrderBy(p => p.ModifiedDate.HasValue).FirstOrDefault()?.ProductName</div>
                         </div>
                     </div>
                 </div>

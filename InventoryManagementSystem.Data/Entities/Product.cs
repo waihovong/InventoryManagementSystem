@@ -21,6 +21,8 @@ namespace InventoryManagementSystem.Data.Entities
         public int Quantity { get; set; }
         public string? Description { get; set; }
         public string? AdditionalInfo { get; set; }
+        public DateTime? CreatedDate { get; set; } = DateTime.UtcNow;
+        public DateTime? ModifiedDate { get; set; } = DateTime.UtcNow;
 
         public ICollection<Product_Category> ProductCategories { get; set; }
         //public int CategoryId { get; set; }

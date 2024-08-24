@@ -685,6 +685,10 @@ video {
   justify-content: space-between;
 }
 
+.gap-3 {
+  gap: 0.75rem;
+}
+
 .gap-4 {
   gap: 1rem;
 }
@@ -713,10 +717,6 @@ video {
   border-width: 1px;
 }
 
-.border-2 {
-  border-width: 2px;
-}
-
 .border-b-0 {
   border-bottom-width: 0px;
 }
@@ -738,6 +738,11 @@ video {
   border-color: rgb(57 219 125 / var(--tw-border-opacity));
 }
 
+.border-slate-200 {
+  --tw-border-opacity: 1;
+  border-color: rgb(226 232 240 / var(--tw-border-opacity));
+}
+
 .border-slate-800 {
   --tw-border-opacity: 1;
   border-color: rgb(30 41 59 / var(--tw-border-opacity));
@@ -746,11 +751,6 @@ video {
 .border-stone-300 {
   --tw-border-opacity: 1;
   border-color: rgb(214 211 209 / var(--tw-border-opacity));
-}
-
-.border-white {
-  --tw-border-opacity: 1;
-  border-color: rgb(255 255 255 / var(--tw-border-opacity));
 }
 
 .bg-\[\#0055CC\] {
@@ -766,6 +766,11 @@ video {
 .bg-\[\#2C333A\] {
   --tw-bg-opacity: 1;
   background-color: rgb(44 51 58 / var(--tw-bg-opacity));
+}
+
+.bg-\[\#35434c\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(53 67 76 / var(--tw-bg-opacity));
 }
 
 .bg-blue-600 {
@@ -786,11 +791,6 @@ video {
 .bg-white {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
-}
-
-.bg-\[\#35434c\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(53 67 76 / var(--tw-bg-opacity));
 }
 
 .p-1 {
@@ -826,6 +826,10 @@ video {
 
 .pb-0 {
   padding-bottom: 0px;
+}
+
+.pl-2 {
+  padding-left: 0.5rem;
 }
 
 .pt-0 {
@@ -923,10 +927,6 @@ video {
   --tw-backdrop-blur: blur(4px);
   -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
   backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
-}
-
-.hover\:pointer-events-auto:hover {
-  pointer-events: auto;
 }
 
 .hover\:cursor-pointer:hover {

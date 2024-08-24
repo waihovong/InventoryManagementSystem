@@ -13,7 +13,7 @@ namespace InventoryManagementSystem.API.Services
     public class ProductService : IProductService
     {
         //private readonly ApplicationDataContext _context;
-        private IDbContextFactory<ApplicationDataContext> _contextFactory;
+        private readonly IDbContextFactory<ApplicationDataContext> _contextFactory;
 
         public ProductService( IDbContextFactory<ApplicationDataContext> contextFactory)
         {
@@ -39,7 +39,9 @@ namespace InventoryManagementSystem.API.Services
                 Description = p.Description,
                 ProductId = p.ProductId,
                 ProductName = p.ProductName,
-                Quantity = p.Quantity
+                Quantity = p.Quantity,
+                ModifiedDate = p.ModifiedDate,
+                CreatedDate = p.CreatedDate,
             }).ToList();
 
             return productDto;
@@ -67,7 +69,9 @@ namespace InventoryManagementSystem.API.Services
                 ProductId = product.ProductId,
                 Description = product.Description,
                 Quantity = product.Quantity,
-                ProductName = product.ProductName
+                ProductName = product.ProductName,
+                CreatedDate = product.CreatedDate,
+                ModifiedDate = product.ModifiedDate
             };
 
             return getProductDto;
@@ -81,7 +85,8 @@ namespace InventoryManagementSystem.API.Services
                 AdditionalInfo = createProduct.AdditionalInfo,
                 Description = createProduct.Description,
                 ProductName = createProduct.ProductName,
-                Quantity = createProduct.Quantity
+                Quantity = createProduct.Quantity,
+                CreatedDate = createProduct.CreatedDate
             };
 
             using (var context = _contextFactory.CreateDbContext())
@@ -96,7 +101,8 @@ namespace InventoryManagementSystem.API.Services
                 ProductId = product.ProductId,
                 Description = product.Description,
                 Quantity = product.Quantity,
-                ProductName = product.ProductName
+                ProductName = product.ProductName,
+                CreatedDate = product.CreatedDate
             };
 
             return createdProductDto;
@@ -122,6 +128,7 @@ namespace InventoryManagementSystem.API.Services
             response.Description = product.Description ?? response.Description;
             response.Quantity = product.Quantity >= 0 ? product.Quantity : response.Quantity;
             response.AdditionalInfo = product.AdditionalInfo ?? response.AdditionalInfo;
+            response.ModifiedDate = product.ModifiedDate ?? response.ModifiedDate;
 
             using (var context = _contextFactory.CreateDbContext())
             {
@@ -130,13 +137,14 @@ namespace InventoryManagementSystem.API.Services
             }
 
 
-            var updatedProductDto = new ProductDTO
+                var updatedProductDto = new ProductDTO
             {
                 AdditionalInfo = response.AdditionalInfo,
                 ProductId = response.ProductId,
                 Description = response.Description,
                 Quantity = response.Quantity,
-                ProductName = response.ProductName
+                ProductName = response.ProductName,
+                ModifiedDate = response.ModifiedDate
             };
 
             return updatedProductDto;

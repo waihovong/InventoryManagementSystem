@@ -140,7 +140,8 @@
             ProductName = ProductView.ProductName,
             Quantity = ProductView.Quantity,
             Description = ProductView.Description,
-            AdditionalInfo = ProductView.AdditionalInfo
+            AdditionalInfo = ProductView.AdditionalInfo,
+            ModifiedDate = DateTime.UtcNow
         };
 
         var product = await _productController.UpdateProduct(productDto);
