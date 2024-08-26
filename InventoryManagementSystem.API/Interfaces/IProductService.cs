@@ -11,5 +11,6 @@ namespace InventoryManagementSystem.API.Interfaces
         Task<ProductDTO> UpdateProduct(ProductUpdateDTO product);
         Task<ProductDTO> GetProductAsync(int productId);
         Task<bool> DeleteProduct(int productId);
+        Task<IEnumerable<ProductDTO>> SearchProducts(string searchTerm);
     }
 }

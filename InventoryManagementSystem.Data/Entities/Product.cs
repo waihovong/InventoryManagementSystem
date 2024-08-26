@@ -17,7 +17,6 @@ namespace InventoryManagementSystem.Data.Entities
         [Required]
         [MaxLength(100)]
         public string ProductName { get; set; } = string.Empty;
-        //public string? Code { get; set; }
         public int Quantity { get; set; }
         public string? Description { get; set; }
         public string? AdditionalInfo { get; set; }
@@ -25,8 +24,5 @@ namespace InventoryManagementSystem.Data.Entities
         public DateTime? ModifiedDate { get; set; } = DateTime.UtcNow;
 
         public ICollection<Product_Category> ProductCategories { get; set; }
-        //public int CategoryId { get; set; }
-        //public Category Categories { get; set; }
-        //public ICollection<ProductLocation> ProductLocations { get; set; }
     }
 }

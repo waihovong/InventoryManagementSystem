@@ -180,5 +180,28 @@ namespace InventoryManagementSystem.API.Services
                 throw new Exception(ex.Message);
             }
         }
+
+        public async Task<IEnumerable<ProductDTO>> SearchProducts(string searchTerm)
+        {
+
+            using var context = await _contextFactory.CreateDbContextAsync();
+
+            var products = await context.Products
+                .Where(p => EF.Functions.ILike(p.ProductName, $"%{searchTerm}%") ||
+                            EF.Functions.ILike(p.Description, $"%{searchTerm}%") ||
+                            EF.Functions.ILike(p.AdditionalInfo, $"%{searchTerm}%"))
+                .ToListAsync();
+            
+            return products.Select(p => new ProductDTO
+            {
+                ProductId = p.ProductId,
+                ProductName = p.ProductName,
+                Description = p.Description,
+                Quantity = p.Quantity,
+                AdditionalInfo = p.AdditionalInfo,
+                CreatedDate = p.CreatedDate,
+                ModifiedDate = p.ModifiedDate
+            });
+        }
     }
 }

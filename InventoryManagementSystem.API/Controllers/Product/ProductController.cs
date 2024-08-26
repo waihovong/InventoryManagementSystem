@@ -13,6 +13,7 @@ namespace InventoryManagementSystem.API.Controllers.Product
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
+        private const int MINIMUM_SEARCH_LENGTH = 3;
         public ProductController(IProductService productService)
         {
             _productService = productService;
@@ -80,11 +81,6 @@ namespace InventoryManagementSystem.API.Controllers.Product
         {
             try
             {
-                //if (string.IsNullOrEmpty(productDTO.ProductName))
-                //{
-                //    return BadRequest("Product name cannot be empty");
-                //}
-
                 var response = await _productService.AddProduct(productDTO);
                 return Ok(response);
             }
@@ -125,6 +121,12 @@ namespace InventoryManagementSystem.API.Controllers.Product
             }
         }
 
+        /// <summary>
+        /// Deletes product from the inventory
+        /// Should soft delete be a thing here?
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <returns></returns>
         [HttpDelete]
         [Route("product/{productId}")]
         public async Task<IActionResult> DeleteProduct(int productId)
@@ -148,6 +150,32 @@ namespace InventoryManagementSystem.API.Controllers.Product
             catch (Exception ex)
             {
                 return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpGet]
+        [Route("search")]
+        public async Task<IActionResult> SearchProducts([FromQuery] string searchTerm)
+        {
+            if (string.IsNullOrEmpty(searchTerm) || searchTerm.Length < MINIMUM_SEARCH_LENGTH)
+            {
+                return BadRequest($"Couldn't find a match. Please try another search");
+            }
+
+            try
+            {
+                var products = await _productService.SearchProducts(searchTerm);
+
+                if (products.Count() == 0)
+                {
+                    return NotFound($"No products found matching the search criteria {searchTerm}");
+                }
+
+                return Ok(products);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }
