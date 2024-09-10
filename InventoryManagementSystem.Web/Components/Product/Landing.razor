@@ -1,5 +1,8 @@
-﻿@using Models;
+﻿@using Microsoft.AspNetCore.Mvc
+@using Models;
 @using InventoryManagementSystem.API.DTO;
+@inject InventoryManagementSystem.API.Controllers.Product.ProductController _productController;
+@using System.Timers;
 
 <div class="mt-5 flex justify-center">
     <div class="flex w-full flex-col gap-4">
@@ -10,8 +13,22 @@
                         <p class="text-lg font-medium text-white">Inventory System</p>
                     </div>
                     <div class="flex h-full items-center justify-end gap-4">
-                        <div class="flex h-full items-center">
-                            <input class="bg-[#35434c] h-full w-full rounded pl-2 text-sm font-medium text-white" type="text" placeholder="Search" />
+                        <div class="relative flex h-full flex-col items-center">
+                            <div class="h-full">
+                                <input 
+                                    @oninput="SearchProduct"
+                                    value="@SearchProductText"
+                                    class="bg-[#35434c] h-full w-full rounded pl-2 text-sm font-medium text-white" type="text" placeholder="Search" />
+                            </div>
+                            @if(itemsFound)
+                            {
+                                <div class="absolute left-0 top-full w-full rounded bg-white p-2 text-sm font-medium text-black">
+                                    @foreach(var product in SearchProducts)
+                                    {
+                                        <p>@product.ProductName</p>
+                                    }
+                                </div>
+                            }
                         </div>
                         <div>
                             <button class="bg-[#0055CC] rounded p-2 text-sm font-medium text-white hover:cursor-pointer" @onclick="AddProductAction">Add Product + </button>
@@ -100,15 +117,22 @@
 
     public EventCallback<bool> IsOpenChanged { get; set; }
 
+    public IEnumerable<ProductViewModel> SearchProducts { get; set; }
+
     public bool isAddProduct = false;
     public bool isEditProduct = false;
     public bool isDeleteProduct = false;
 
     public bool viewSelectedProduct = false;
+    private bool itemsFound = false;
 
     private int editProductId;
     private int deleteProductId;
     private int selectedProductId;
+
+    private string SearchProductText = string.Empty;
+
+    private Timer _debounceTimer;
 
     public void AddProductAction()
     {
@@ -186,6 +210,54 @@
             viewSelectedProduct = true;
             StateHasChanged();
         }
+    }
+
+    public async Task<IEnumerable<ProductViewModel>> SearchProduct(ChangeEventArgs e)
+    {
+        SearchProductText = e.Value?.ToString() ?? string.Empty;
+        List<ProductViewModel> productSearchList = new List<ProductViewModel>();
+        if (!string.IsNullOrEmpty(SearchProductText))
+        {
+            var productSearch = await _productController.SearchProducts(SearchProductText);
+            if (productSearch.Result != null && productSearch.Result is OkObjectResult okObjectResult)
+            {
+                var productSearchDto = okObjectResult.Value as IEnumerable<ProductDTO>;
+                itemsFound = true;
+                productSearchList = MapProductView(productSearchDto).ToList();
+                SearchProducts = productSearchList;
+                StateHasChanged();
+            }
+        }
+        else
+        {
+            itemsFound = false;
+            StateHasChanged();
+        }
+
+
+        return productSearchList;
+    }
+
+    //Put this in a common file it's used several times in other files
+    private IEnumerable<ProductViewModel> MapProductView(IEnumerable<ProductDTO> productDto)
+    {
+        if (productDto == null)
+        {
+            return Enumerable.Empty<ProductViewModel>();
+        }
+
+        var productView = productDto.Select(dto => new ProductViewModel
+            {
+                AdditionalInfo = dto.AdditionalInfo,
+                ProductName = dto.ProductName,
+                Quantity = dto.Quantity,
+                Description = dto.Description,
+                ProductId = dto.ProductId,
+                CreatedDate = dto.CreatedDate,
+                ModifiedDate = dto.ModifiedDate
+            });
+
+        return productView;
     }
 }
 

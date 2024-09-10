@@ -155,7 +155,7 @@ namespace InventoryManagementSystem.API.Controllers.Product
 
         [HttpGet]
         [Route("search")]
-        public async Task<IActionResult> SearchProducts([FromQuery] string searchTerm)
+        public async Task<ActionResult<IEnumerable<ProductDTO>>> SearchProducts([FromQuery] string searchTerm)
         {
             if (string.IsNullOrEmpty(searchTerm) || searchTerm.Length < MINIMUM_SEARCH_LENGTH)
             {
