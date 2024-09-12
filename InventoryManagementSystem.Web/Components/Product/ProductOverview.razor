@@ -10,23 +10,23 @@
             <div class="flex items-center justify-between rounded bg-[#35434c] p-2">
                 <div class="flex w-full flex-col">
                     <div class="flex w-full justify-between">
-                        <div class="w-full">
-                            <span class="w-full p-2 pt-0 text-base font-medium text-white">@Product.ProductName</span>
+                        <div class="w-full p-2">
+                            <span class="w-full pt-0 text-base font-medium text-white">@Product.ProductName</span>
                         </div>
-                        <div class="flex justify-end">
+                        <div class="flex justify-end p-2">
                             @if (Product.CreatedDate != null)
                             {
-                                <span class="whitespace-nowrap p-2 pt-0 text-xs font-medium text-white">@Product.CreatedDate.Value.ToString("MMM dd, yyyy")</span>
+                                <span class="whitespace-nowrap pt-0 text-xs font-medium text-white">@Product.CreatedDate.Value.ToString("MMM dd, yyyy")</span>
                             }
                         </div>
                     </div>
-                    <div class="flex w-full flex-col pl-2 text-gray-400">
+                    <div class="flex w-full flex-col gap-3 pl-2 text-white">
                         <div class="flex flex-col">
-                            <span class="text-xs font-medium text-white">Description</span>
+                            <span class="text-xs font-medium text-gray-400">Description</span>
                             <span class="text-xs font-medium">@Product.Description</span>
                         </div>
                         <div class="flex flex-col">
-                            <span class="text-xs font-medium text-white">Information</span>
+                            <span class="text-xs font-medium text-gray-400">Information</span>
                             <span class="text-xs font-medium">@Product.AdditionalInfo</span>
                         </div>
                     </div>
