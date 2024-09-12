@@ -5,9 +5,9 @@
 
 <div class="flex items-center justify-center">
     <div class="dialog p-3"></div>
-    <div style="z-index:10; position:absolute; top:0" class="bg-[#282E33] mt-8 w-fit rounded-xl p-6">
+    <div style="z-index:10; position:absolute; top:0" class="mt-8 w-fit rounded-xl bg-[#282E33] p-6">
         <span class="text-lg font-medium text-white">Add Product</span>
-        <div class="text-[#F1F2F4] text-base">Add a new product to your inventory</div>
+        <div class="text-base text-[#F1F2F4]">Add a new product to your inventory</div>
         <div>
             <EditForm Model="Product" OnValidSubmit="AddProductToInventory">
                 <DataAnnotationsValidator/>

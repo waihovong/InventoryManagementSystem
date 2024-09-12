@@ -4,22 +4,32 @@
 @inject InventoryManagementSystem.API.Controllers.Product.ProductController _productController;
 @if (!isLoading)
 {
-    <div class="bg-[#2C333A] border-[#39DB7D] w-full rounded-lg text-white backdrop-blur-sm">
+    <div class="w-full rounded-lg border-[#39DB7D] bg-[#2C333A] text-white backdrop-blur-sm">
         <h3 class="border-t-0 border-r-0 border-l-0 border border-slate-200 p-3 text-base font-medium">Product Overview</h3>
         <div class="p-2">
-            <span class="p-2 pt-0 text-base font-medium text-white">@Product.ProductName</span>
-            <div class="p-2">
-                <span class="text-xs font-light">@Product.Description</span>
+            <div class="flex justify-between">
+                <div>
+                    <span class="p-2 pt-0 text-base font-medium text-white">@Product.ProductName</span>
+                </div>
+                @if (Product.CreatedDate != null)
+                {
+                    <div>
+                        <span class="p-2 pt-0 text-base text-sm font-medium text-white">@Product.CreatedDate.Value.ToString("MMM dd, yyyy")</span>
+                    </div>
+                }
             </div>
             <div class="p-2">
-                <span class="text-xs font-light">@Product.AdditionalInfo</span>
+                <span class="text-xs font-medium">@Product.Description</span>
+            </div>
+            <div class="p-2">
+                <span class="text-xs font-medium">@Product.AdditionalInfo</span>
             </div>
         </div>
     </div>
 }
 else
 {
-    <div class="bg-[#2C333A] w-full rounded-lg p-3 text-white backdrop-blur-sm">
+    <div class="w-full rounded-lg bg-[#2C333A] p-3 text-white backdrop-blur-sm">
         <h3 class="p-2 pb-0 text-base font-medium"></h3>
         <span class="p-2 pt-0 text-xs font-medium text-white"></span>
     </div>
