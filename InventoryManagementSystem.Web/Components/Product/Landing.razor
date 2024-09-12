@@ -7,7 +7,7 @@
 <div class="mt-5 flex justify-center">
     <div class="flex w-full flex-col gap-4">
         <div class="flex gap-4">
-            <div class="flex w-full flex-col gap-4">
+            <div class="flex w-9/12 flex-col gap-4">
                 <div class="flex items-center justify-between gap-4">
                     <div>
                         <p class="text-lg font-medium text-white">Inventory System</p>
@@ -26,10 +26,14 @@
                                 <div class="z-10 absolute left-0 top-full w-full rounded bg-white text-sm font-medium text-black">
                                     @foreach(var product in SearchProducts)
                                     {
-                                        <p class="p-3 hover:cursor-pointer hover:bg-slate-200"
+                                        <div
+                                            class="p-3 hover:cursor-pointer hover:bg-slate-200"
                                             @onclick="(() => ViewSelectedProduct(product.ProductId))">
                                             @product.ProductName
-                                        </p>
+                                            <div>
+                                                <span class="text-sm text-gray-500">@product.Description</span>
+                                            </div>
+                                        </div>
                                     }
                                 </div>
                             }
@@ -71,7 +75,7 @@
                     ViewSelectedProduct="ViewSelectedProduct"
                     Products="Products" />
             </div>
-            <div class="flex w-full flex-col gap-4">
+            <div class="flex w-3/12 flex-col gap-4">
                 <InventoryManagementSystem.Web.Components.Product.Latest Products="Products " />
                 @if (viewSelectedProduct)
                 {

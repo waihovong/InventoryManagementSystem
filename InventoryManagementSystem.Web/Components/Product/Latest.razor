@@ -10,8 +10,15 @@
 
 <div class="w-full rounded-lg bg-[#2C333A] p-3 text-white backdrop-blur-sm">
     <h3 class="p-2 pb-0 text-base font-medium">Recent Products</h3>
-    <span class="p-2 pt-0 text-xs font-medium text-white">Most recent</span>
     <div class="mt-2">
+        <div class="flex justify-between p-2 text-sm font-medium">
+            <div>
+                <span>Product</span>
+            </div>
+            <div>
+                <span>Quantity</span>
+            </div>
+        </div>
         @foreach (var product in latestProductList)
         {
             <div class="flex justify-between p-2 text-sm">

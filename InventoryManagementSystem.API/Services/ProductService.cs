@@ -136,7 +136,6 @@ namespace InventoryManagementSystem.API.Services
                 await context.SaveChangesAsync();
             }
 
-
                 var updatedProductDto = new ProductDTO
             {
                 AdditionalInfo = response.AdditionalInfo,
@@ -191,8 +190,14 @@ namespace InventoryManagementSystem.API.Services
                             EF.Functions.ILike(p.Description, $"%{searchTerm}%") ||
                             EF.Functions.ILike(p.AdditionalInfo, $"%{searchTerm}%"))
                 .ToListAsync();
+
+            // Orders results based on search criteria matching string
+            var orderedProducts = products
+                .OrderBy(d => d.ProductName)
+                .ThenBy(d => d.Description)
+                .ThenBy(d => d.AdditionalInfo).ToList();
             
-            return products.Select(p => new ProductDTO
+            return orderedProducts.Select(p => new ProductDTO
             {
                 ProductId = p.ProductId,
                 ProductName = p.ProductName,
