@@ -10,5 +10,6 @@ namespace InventoryManagementSystem.API.DTO
         public int Quantity { get; set; }
         public string? AdditionalInfo { get; set; }
         public DateTime? CreatedDate { get; set; }
+        public string CategoryName { get; set; } = string.Empty;
     }
 }

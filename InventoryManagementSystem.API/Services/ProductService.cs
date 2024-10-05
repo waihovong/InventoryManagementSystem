@@ -14,10 +14,12 @@ namespace InventoryManagementSystem.API.Services
     {
         //private readonly ApplicationDataContext _context;
         private readonly IDbContextFactory<ApplicationDataContext> _contextFactory;
+        private readonly ICategoryService _categoryService;
 
-        public ProductService( IDbContextFactory<ApplicationDataContext> contextFactory)
+        public ProductService( IDbContextFactory<ApplicationDataContext> contextFactory, ICategoryService categoryService)
         {
             _contextFactory = contextFactory;
+            _categoryService = categoryService;
         }
 
         private async Task<T> UseDbContextAsync<T>(Func<ApplicationDataContext, Task<T>> action)
@@ -91,21 +93,34 @@ namespace InventoryManagementSystem.API.Services
 
             using (var context = _contextFactory.CreateDbContext())
             {
+                var category = context.Categories.FirstOrDefault(c => c.CategoryName == createProduct.CategoryName);
+                if (category == null)
+                {
+                    await _categoryService.AddCategory(new CreateCategoryDTO
+                    {
+                        CategoryName = createProduct.CategoryName,
+                        Description = string.Empty
+                    });
+                }
+
+                category = context.Categories.FirstOrDefault(c => c.CategoryName == createProduct.CategoryName);
+
                 context.Products.Add(product);
                 await context.SaveChangesAsync();
+
+                var createdProductDto = new ProductDTO
+                {
+                    AdditionalInfo = product.AdditionalInfo,
+                    ProductId = product.ProductId,
+                    Description = product.Description,
+                    Quantity = product.Quantity,
+                    ProductName = product.ProductName,
+                    CreatedDate = product.CreatedDate,
+                    CategoryId = category.CategoryId
+                };
+
+                return createdProductDto;
             }
-
-            var createdProductDto = new ProductDTO
-            {
-                AdditionalInfo = product.AdditionalInfo,
-                ProductId = product.ProductId,
-                Description = product.Description,
-                Quantity = product.Quantity,
-                ProductName = product.ProductName,
-                CreatedDate = product.CreatedDate
-            };
-
-            return createdProductDto;
         }
 
         public async Task<ProductDTO> UpdateProduct(ProductUpdateDTO product)

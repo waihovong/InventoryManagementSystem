@@ -2,8 +2,6 @@
 using InventoryManagementSystem.API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace InventoryManagementSystem.API.Controllers.Category
 {
     [Route("api/[controller]")]
@@ -53,6 +51,20 @@ namespace InventoryManagementSystem.API.Controllers.Category
         public async Task<ActionResult<CategoryDTO>> UpdateCategory(UpdateCategoryDTO updateCategory)
         {
             var response = await _categoryService.UpdateCategory(updateCategory);
+            if (response == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("search")]
+        public async Task<ActionResult<IEnumerable<CategoryDTO>>> SearchCategories(string searchTerm)
+        {
+            var response = await _categoryService.SearchCategories(searchTerm);
+
             if (response == null)
             {
                 return NotFound();

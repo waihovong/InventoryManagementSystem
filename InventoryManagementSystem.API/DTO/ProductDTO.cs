@@ -11,5 +11,6 @@ namespace InventoryManagementSystem.API.DTO
         public string? AdditionalInfo { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? ModifiedDate { get; set; }
+        public int CategoryId { get; set; }
     }
 }

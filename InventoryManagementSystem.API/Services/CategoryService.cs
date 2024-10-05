@@ -13,6 +13,7 @@ namespace InventoryManagementSystem.API.Services
 {
     public class CategoryService : ICategoryService
     {
+
         private readonly ApplicationDataContext _context;
 
         public CategoryService(ApplicationDataContext context)
@@ -48,7 +49,6 @@ namespace InventoryManagementSystem.API.Services
 
                 _context.Categories.Add(category);
                 await _context.SaveChangesAsync();
-
                 var createdCategory = new CategoryResult
                 {
                     CategoryName = category.CategoryName,
@@ -102,6 +102,23 @@ namespace InventoryManagementSystem.API.Services
             };
 
             return updatedCategory;
+        }
+
+        [HttpGet]
+        public async Task<IEnumerable<CategoryDTO>> SearchCategories(string searchTerm)
+        {
+            var category = await _context.Categories
+                .Where(c => EF.Functions.ILike(c.CategoryName, $"%{searchTerm}%"))
+                .ToListAsync();
+
+            var orderedCategory = category.OrderBy(d => d.CategoryName);
+
+            return orderedCategory.Select(r => new CategoryDTO
+            {
+                CategoryId = r.CategoryId,
+                CategoryName = r.CategoryName,
+                Description = r.Description
+            });
         }
 
     }

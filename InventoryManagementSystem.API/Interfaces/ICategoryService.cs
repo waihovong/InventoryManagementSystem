@@ -7,6 +7,6 @@ namespace InventoryManagementSystem.API.Interfaces
         Task<IEnumerable<CategoryDTO>> GetCategoriesAsync();
         Task<CategoryResult> AddCategory(CreateCategoryDTO createCategory);
         Task<CategoryDTO> UpdateCategory(UpdateCategoryDTO updateCategory);
-
+        Task<IEnumerable<CategoryDTO>> SearchCategories(string searchTerm);
     }
 }
